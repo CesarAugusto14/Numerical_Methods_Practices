@@ -1,0 +1,36 @@
+clc; clear variables; close all;
+% Script for testing the three created functions to solve the given
+% differential equation on example_2nd_order_ODE.m. The system is the same.
+% Conditions of the problem
+a = 1; b = 15; c = 4*pi^2;
+
+% System of Equation F' = A*F
+A = [0 1; -c/a -b/a];
+dt = 0.05; t0 = 0; tf = 1; 
+
+% Euler 
+x0 = [0 1]';
+
+% Given equation:
+G = @(t, x) A*x;
+
+
+figure(1)
+
+[teuler, xeuler] = EulerODE(G, dt, t0, tf, x0);
+[trk2 , xrk2]    = RK2_ODE(G, dt, t0, tf, x0);
+[trk4 , xrk4]    = RK4_ODE(G, dt, t0, tf, x0);
+
+plot(teuler, xeuler(1, :), 'b^-')
+hold on
+plot(trk2, x(1, :), 'ro-')
+plot(t, x(1, :), '+-', 'color', '#77AC30', 'LineWidth',2)
+
+% Exact Solution:
+tplot = 0:1e-3:1; fplot = (exp(-1/2*(15 + sqrt(225 - 16*pi^2))*tplot).*(-1 + exp(sqrt(225 - 16*pi^2)*tplot)))/sqrt(225 - 16 *pi^2);
+plot(tplot, fplot, 'LineWidth',3, 'color', 'black')
+legend( "Euler's Method", 'RK2', 'RK4', 'Exact Solution')
+ylabel('Solution, $f(t)$', 'Interpreter','latex')
+xlabel('time, $t$', 'Interpreter','latex')
+set(gca, 'FontName', 'Times', 'FontSize', 15)
+grid on

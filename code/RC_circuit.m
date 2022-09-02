@@ -1,0 +1,92 @@
+clc; clear variables; close all;
+% Script for testing the RK4 function by using a simple RC circuit. It will
+% have one Resistor of 20 ohms, one capacitor of 14 microfarads and one DC
+% voltage source of 5 Volts. 
+
+% Specifications of the desired Circuit.
+R = 20; C = 14e-6; Vs = 5; 
+
+% Initial voltage.
+Vo = 0;
+
+% Let's use our knowledge on circuits to determine the ending time for the
+% simulation. 
+tau = R*C; 
+tf = 5*tau;
+
+% Now, I will use 5*tau/20 to determine deltat, this will use 21 steps to
+% create the curve. 
+dt = 5*tau/20;
+
+% Function handler. If we wanted to do use a handler with different steps,
+% we would need another function. Let's create another function in a
+% following example. 
+
+F = @(t, v) 1/R/C*(Vs - v);
+
+% Numerical Solution:
+[t, v] = RK4_ODE(F, dt, 0, tf, Vo);
+
+% Exact solution (known by our knowledge on Electrical Circuits):
+tplot = 0:dt/10:tf; vplot = Vs + (Vo - Vs)*exp(-tplot/R/C);
+
+% Plotting Results:
+figure(1)
+hold on
+plot(t*1000, v, 'r^-', 'linewidth', 2, 'MarkerSize', 10)
+plot(tplot*1000, vplot, 'k--', 'linewidth',2)
+legend('RK4 Solution', 'Exact Solution', 'Location','southeast')
+title('Comparison Between Numerical and Exact with RK4')
+ylabel('$V_c$ [V]', 'Interpreter','latex')
+xlabel('$t$ [ms]', 'Interpreter','latex')
+set(gca, 'FontName', 'Times', 'FontSize', 15)
+grid on
+
+% Plotting Voltage and Current:
+figure(2)
+hold on
+plot(t*1000, v, 'k^-', 'linewidth', 2, 'MarkerSize', 10)
+title('Voltage and Current of the Capacitor for a DC Source')
+ylabel('$V_c$ [V]', 'Interpreter','latex')
+xlabel('$t$ [ms]', 'Interpreter','latex')
+yyaxis right
+plot(t*1000, (Vs-v)/R*1000, '^-', 'LineWidth',2)
+ylabel('$I_c$ [mA]', 'Interpreter','latex')
+legend('Voltage', 'Current', 'Location','best' )
+set(gca, 'FontName', 'Times', 'FontSize', 15)
+grid on
+
+% Let's try it with an AC source, my source will be of 110 Volts, my
+% resistance of 60 ohms and my capacitor of 60 microfarads. It is a new
+% circuit. 
+R = 60; C = 60e-6; Vs = 110*sqrt(2); 
+
+tf = 2e-1;
+
+dt = 1e-4;      % With 1e-2 explodes. With 1e-3 is not smooth. 
+                % for values between 1e-3 and 1e-2 is not-smooth and starts
+                % exploding!
+
+Vo = 0;
+F = @(t, v) 1/R/C*(Vs*sin(377*t) - v);
+
+[t, v] = RK2_ODE(F, dt, 0, tf, Vo);
+figure(3)
+hold on
+plot(t, v, 'k-',  'linewidth', 2, 'MarkerSize', 10)
+title('Voltage and Current of the Capacitor for an AC Source')
+ylabel('$V_c$ [V]', 'Interpreter','latex')
+xlabel('$t$ [s]', 'Interpreter','latex')
+ylim([-150 150])
+yyaxis right
+plot(t, (Vs*sin(377*t)-v)/R, '-', 'LineWidth',2)
+ylabel('$I_c$ [A]', 'Interpreter','latex')
+legend('Voltage', 'Current', 'Location','best' )
+set(gca, 'FontName', 'Times', 'FontSize', 15)
+ylim([-5 5])
+grid on
+
+% Note the Transients in both circuits, note the current leading in the
+% second one!
+% 
+% NOTE: Check everything with ode23 and ode45.
