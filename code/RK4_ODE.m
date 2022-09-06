@@ -20,6 +20,6 @@ function [t, x] = RK4_ODE(G, dt, t0, tf, x0)
         k4 = G(t(i) + dt, x(:, i)+ k2*dt);
         x(:, i+1) = x(:, i) + dt/6*(k1 + 2*k2 + 2*k3 + k4);
     end
-
+    x = x';
 % Code developed by Cesar Sanchez for Fall 2022. 
 end
