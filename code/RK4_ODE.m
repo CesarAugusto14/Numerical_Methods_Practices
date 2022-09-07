@@ -14,12 +14,18 @@ function [t, x] = RK4_ODE(G, dt, t0, tf, x0)
     x(:,1) = x0;
     
     for i = 1:N-1
-        k1 = G(t(i), x(:, i));
-        k2 = G(t(i) + dt/2, x(:, i)+ k1*dt/2);
-        k3 = G(t(i) + dt/2, x(:, i)+ k2*dt/2);
-        k4 = G(t(i) + dt, x(:, i)+ k2*dt);
-        x(:, i+1) = x(:, i) + dt/6*(k1 + 2*k2 + 2*k3 + k4);
+        if x(3, i) <= 10
+            k1 = G(t(i), x(:, i));
+            k2 = G(t(i) + dt/2, x(:, i)+ k1*dt/2);
+            k3 = G(t(i) + dt/2, x(:, i)+ k2*dt/2);
+            k4 = G(t(i) + dt, x(:, i)+ k2*dt);
+            x(:, i+1) = x(:, i) + dt/6*(k1 + 2*k2 + 2*k3 + k4);
+        else
+            break
+        end
+        
     end
     x = x';
+    
 % Code developed by Cesar Sanchez for Fall 2022. 
 end
