@@ -14,4 +14,6 @@ tf = 5*tau;
 F = @(t, v) 1/R/C*(Vs*sin(377*t) - v);
 
 
-[t, x] = dp_rk45a_ODE(F, 0, tf, Vo, 1e-5)
+[t, x] = dp_rk45a_ODE(F, 0, tf, Vo, 1);
+
+plot(t, x)
