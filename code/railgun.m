@@ -28,7 +28,7 @@ function dx = railgun(t, x0, C, Ls, Ll, Rl, m)
     % get those equations.
     dxdt = u;
     di1dt = I2; 
-    dudt = 1/2/m*Ll*I1^2;
-    di2dt = -1/(Ls+Ll*x)*((1/C + Rl*u + Ll*dudt)*I1 + (Rl*x+2*Ll*u)*I2);
+    dudt = Ll*I1^2/(2*m);
+    di2dt = -1/(Ls+Ll*x)*((1/C + Rl*u + Ll*dudt)*I1 + (Rl*x+2*Ll*dxdt)*I2);
     dx = [di1dt; di2dt; dxdt; dudt];
 end

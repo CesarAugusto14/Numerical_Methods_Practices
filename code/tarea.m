@@ -1,7 +1,7 @@
 clc; clear variables; close all
 
 % Circuit information:
-C = 5; Vo = 100e3; Ls = 60e-3; Rl = 50e-3; Ll=700e-9;
+C = 5; Vo = 100e3; Ls = .5e-3; Rl = 0.05; Ll=700e-9;
 
 % Projectile information:
 m = 10;  % MASS
@@ -54,6 +54,6 @@ ylabel("u(t) [m/s]",'Interpreter','latex')
 set(gca, 'FontName', 'Times', 'FontSize', 15)
 
 g = 9.81;
-maxa = max(u)/max(t)/g;
+maxa = max(diff(u/dt))/g;
 fprintf('Maximum Acceleration = %.4f g \n',maxa)
 fprintf('Maximum speed = %.4f [m/s] \n', max(u))

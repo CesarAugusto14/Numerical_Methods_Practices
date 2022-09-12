@@ -63,7 +63,7 @@ R = 60; C = 60e-6; Vs = 110*sqrt(2);
 
 tf = 2e-1;
 
-dt = 1e-4;      % With 1e-2 explodes. With 1e-3 is not smooth. 
+dt = 1e-3;      % With 1e-2 explodes. With 1e-3 is not smooth. 
                 % for values between 1e-3 and 1e-2 is not-smooth and starts
                 % exploding!
 
