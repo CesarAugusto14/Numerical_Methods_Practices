@@ -63,7 +63,7 @@ xlim([-2e-4 2e-4])
 ylim([-2e-4, 2e-4])
 legend('Planet 1', 'Planet 2', 'Planet 3', 'Planet 4', 'Planet 5', ...
     'Comet 1', 'Comet 2', 'Comet 3','location','eastoutside')
-title('Trajectory for dopri5 (Ly: lightyears)')
+title('Trajectory for DOPRI5 (Ly: lightyears)')
 xlabel('x(t) [Ly]')
 ylabel('y(t) [Ly]')
 grid on
