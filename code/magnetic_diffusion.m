@@ -3,7 +3,7 @@ clc; clear variables; close all;
 sigma = 5.7e7; mu = 4*pi*1e-7;
 
 D = 1/sigma/mu; 
-I = 100e3;
+I = 1e3;
 y0 = 1e-3;
 BC = [0 mu*I/y0];
 
@@ -25,7 +25,7 @@ for n = 1:N
 end
 
 f = figure(1);
-f.Position = [100 100 1000 1000];
+f.Position = [100 100 600 600];
 for i = 2:length(u)
     plot(x, u(i, :), 'ro-', 'LineWidth',3)
     grid on
