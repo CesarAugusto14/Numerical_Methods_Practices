@@ -8,6 +8,7 @@ y0 = 1e-3;
 BC = [0 mu*I/y0];
 
 tf = 10e-6; dx =  y0/50;
+% here
 dt = dx^2/2/D; 
 f = 1e6;
 % Time and space arrays:

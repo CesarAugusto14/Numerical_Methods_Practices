@@ -20,8 +20,8 @@ f =1E6;
 for n = 1:N
     for i = 2:M-1
         B(n+1, i) = B(n, i) + D*dt/dr^2*(B(n, i+1) - 2*B(n, i) + B(n, i-1)) + ...
-            D/r(i)*dt/dr*(B(n, i+1) - B(n, i));
-
+            D/r(i)*dt/dr*(B(n, i+1) - B(n, i) ) - D*dt*B(i)/r(i)^2;
+        
         B(n+1, 1) = BC(1); B(n+1, end) = BC(2)*cos(2*pi*f*t(n));
     end
 end
