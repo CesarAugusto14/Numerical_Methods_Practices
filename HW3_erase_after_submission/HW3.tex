@@ -80,9 +80,9 @@ Consider a $1 mm$ radius copper conductor (circular, $\sigma = 5.7\cdot 10^7 S/m
 \begin{enumerate}
 \item For $f = 100kHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $250 ns$. 
 
-\item For $f = 1MHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $250 ns$. 
+\item For $f = 1MHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $50 ns$. 
 
-\item For $f = 10MHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $250 ns$. 
+\item For $f = 10MHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $10 ns$. 
 \item Write a short paragraph describing the results. 
 \end{enumerate}
 \end{enumerate}
@@ -110,31 +110,106 @@ B &= \frac{\mu r I}{2 \pi R^2}
 Which means that $B(r=0) = 0$ and $B(r=R) = \frac{\mu I}{2 \pi R}$, where $R$ is the value of the radius on the surface. Note that the magnitude of the field only depends on the radius, while the direction is coherent with the angle $\varphi$ in cylindrical coordinates, therefore:
 
 \begin{equation}
-\vec{B}(\vec{r},t) = B_r \hat{e}_{\varphi}
+\vec{B}(\vec{r},t) = B_{\varphi} \hat{e}_{\varphi}
 \end{equation}
 
 As we have a vector field, we can compute the laplacian as:
 
 \begin{equation}
-\nabla^2 \vec{B}(\vec{r},t) = \left(\nabla^2 B_{r} - \frac{B_r}{r^2} \right)
+\nabla^2 \vec{B}(\vec{r},t) = \left(\nabla^2 B_{\varphi} - \frac{B_{\varphi}}{r^2} \right)
 \end{equation}
 
-Where $ \nabla^2 B_r = \frac{1}{r}\frac{\partial}{\partial r} \left( r \frac{\partial B_r}{\partial r}\right)$. Which makes equation 1 into:
+Where $ \nabla^2 B_{\varphi} = \frac{1}{r}\frac{\partial}{\partial r} \left( r \frac{\partial B_{\varphi}}{\partial r}\right)$. Which makes equation 1 into:
 
 \begin{equation}
-\frac{1}{r}\frac{\partial}{\partial r} \left( r \frac{\partial B_r}{\partial r}\right)- \frac{B_r}{r^2} = \frac{\partial \vec{B}}{\partial t}
+\frac{a}{r}\frac{\partial}{\partial r} \left( r \frac{\partial B_{\varphi}}{\partial r}\right)- \frac{B_{\varphi}}{r^2} = \frac{\partial \vec{B}}{\partial t}
 \end{equation}
 
-\subsubsection{Update Equation}
+Where $a = \frac{1}{\mu_0 \sigma}$ is the diffusion constant. And the current density can be computed by using Ampere's Law in cylindrical coordinates: 
+
+\begin{equation}
+\nabla \times \vec{B} = \frac{1}{r} \left(\frac{\partial (r B_{\varphi})}{\partial r}\right)\hat{e}_z = \mu_0 J_z \hat{e}_z
+\end{equation}
+
+\subsubsection{Update Equations}
 We can write equation 4 by using the FTCS scheme, into the following update equation:
 
 \begin{equation}
-B_i^{n+1} = B_i^n + \frac{\Delta t}{\mu_0 \sigma } \frac{B_i^2}{r_i^2} + \frac{\Delta t}{\mu_0 \sigma \Delta r^2} \Big(B_{i+1}^n - 2B_i^n + B_{i-1}^n \Big) + \frac{\Delta t}{\mu_0 \sigma r_i \Delta r} \Big(B_{i+1}^m - B_i^n \Big) 
+B_i^{n+1} = B_i^n + a \Delta t \left( \frac{B_{i+1}^n - 2B_i^n + B_{i-1}^n}{\Delta r^2} \right) + \frac{a \Delta t}{r_i \Delta r}(B_{i+1}^n - B_i^n) - \frac{a}{r_i^2}B_i^n
 \end{equation}
 
-While the update equation for the current density is:
+With Dirichlet Boundary conditions:  $B(r=0) = 0$ and $B(r=R) = \frac{\mu I}{2 \pi R}$. Also, we can automatically compute the current density by working on equation 5:
 
 \begin{equation}
+J_i^n = \frac{1}{\mu r_i} + \frac{1}{\mu}\left(\frac{B_{i+1}^n - B_i^n}{dr}\right)
+\end{equation} 
 
+With trivial von Neumann's Boundary Conditions. 
+
+\subsubsection{Theoretical Test:}
+
+We will use the following question to check the steady-state result for our problem:
+
+\begin{equation}
+B = \frac{\mu I}{2 \pi R^2} r
 \end{equation}
+\\
+Note that in this case, the magnetic field $B$ is linearly depending on the radial variable, with a slope of $\frac{\mu I}{2 \pi R^2}$. So for a DC current, we should be expecting a linear behavior in steady-state. For this first test, we will compute the numerical magnetic field $H = B/\mu $ at $25 \mu s$ (higher than the expected $10 \mu s$, to ensure steady-state), and compare to the steady state theoretical solution. The result can be seen in Figure 1.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.25]{test_plot_figures}
+\caption{Comparison of the theory with the numeric result.}
+\end{figure}
+
+Note that the resulting curves are identical, as expected. We should also remember that to test the behavior of the current density, we need to integrate the current density over the cross-section surface of the conductor. We will show this during the results.
+
+\subsection{Results}
+
+\subsubsection{DC Current of 1 kA:}
+
+In figure 2, we can see the results for question 1.a.i. and 1.a.ii:
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.24]{DC_behavior}
+\caption{Evolution of the Magnetic Field (top) and the Current Density (Bottom)}
+\end{figure}
+
+Initially, the field is very weak in the center of the conductor, and suddenly at around 0.8 mm, it grows exponentially to the boundary condition. The field after some time, behaves more linearly than exponentially, and in the last iteration (for $10 \mu s$, in the top golden line), it looks very similar to the result in Figure 1. Note also that in the bottom plot (for Current Density), the current density is highly concentrated near the boundary of the conductor. However, after some time, it homogenizes across the radius, as expected.
+
+\subsubsection{For AC with f = 100kHz}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.235]{AC_100kHz}
+\caption{Evolution of the Magnetic Field (top) and the Current Density (Bottom), for $f = 100kHz$}
+\end{figure}
+
+\subsubsection{For AC with f = 1MHz}
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.235]{AC_1MHz}
+\caption{Evolution of the Magnetic Field (top) and the Current Density (Bottom), for $f = 1MHz$}
+\end{figure}
+\pagebreak
+\subsubsection{For AC with f = 10MHz}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.235]{AC_10MHz}
+\caption{Evolution of the Magnetic Field (top) and the Current Density (Bottom), for $f = 10MHz$}
+\end{figure}
+
+\subsubsection{Analysis for the AC results:}
+
+In figures 3, 4 and 5 we can see the current density and the magnetic field for the three values of frequency. Note that both values are weaker towards the center of the conductor. However, for high values of frequency, the longitude where we can find values of current density and magnetic field, are lower. This is called the \textit{Skin Effect}, where we can see that for higher frequencies, the current is mostly flowing near the surface of the conductor, the "Skin". 
+
+Note also that the values of current density increases for high values of frequency. 
+
+For the 10MHz frequency, we needed to reduce the the $\Delta r$ and $Delta t$ for getting smooth curves. So the integration values are $\Delta r = 1mm/120$, and the $\Delta t = 1 ns$. 
+
+\section{Script Used}
+
+\lstinputlisting[language=Octave]{magnetic_diffusion_polar_coord.m}
+
 \end{document}

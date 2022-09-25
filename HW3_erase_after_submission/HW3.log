@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2021.10.3)  24 SEP 2022 15:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2021.10.3)  25 SEP 2022 18:24
 entering extended mode
 **./HW3.tex
 (HW3.tex
@@ -999,30 +999,66 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 60.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-{C:/Users/cesarasa/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] (HW3
-.aux) ) 
+{C:/Users/cesarasa/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+<test_plot_figures.jpg, id=17, 1098.1025pt x 783.92876pt>
+File: test_plot_figures.jpg Graphic file (type jpg)
+<use test_plot_figures.jpg>
+Package pdftex.def Info: test_plot_figures.jpg  used on input line 161.
+(pdftex.def)             Requested size: 274.52495pt x 195.9817pt.
+ [2]
+<DC_behavior.jpg, id=25, 1411.2725pt x 941.5175pt>
+File: DC_behavior.jpg Graphic file (type jpg)
+<use DC_behavior.jpg>
+Package pdftex.def Info: DC_behavior.jpg  used on input line 174.
+(pdftex.def)             Requested size: 338.71233pt x 225.96881pt.
+ [3 <./test_plot_figures.jpg> <./DC_behavior.jpg>]
+<AC_100kHz.jpg, id=29, 1411.2725pt x 941.5175pt>
+File: AC_100kHz.jpg Graphic file (type jpg)
+<use AC_100kHz.jpg>
+Package pdftex.def Info: AC_100kHz.jpg  used on input line 184.
+(pdftex.def)             Requested size: 331.6491pt x 221.25664pt.
+<AC_1MHz.jpg, id=30, 1411.2725pt x 941.5175pt>
+File: AC_1MHz.jpg Graphic file (type jpg)
+<use AC_1MHz.jpg>
+Package pdftex.def Info: AC_1MHz.jpg  used on input line 191.
+(pdftex.def)             Requested size: 331.6491pt x 221.25664pt.
+ [4 <./AC_100kHz.jpg> <./AC_1MHz.jpg>]
+<AC_10MHz.jpg, id=34, 1411.2725pt x 941.5175pt>
+File: AC_10MHz.jpg Graphic file (type jpg)
+<use AC_10MHz.jpg>
+Package pdftex.def Info: AC_10MHz.jpg  used on input line 199.
+(pdftex.def)             Requested size: 331.6491pt x 221.25664pt.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+(magnetic_diffusion_polar_coord.m [5 <./AC_10MHz.jpg>] [6]) [7] (HW3.aux) ) 
 Here is how much of TeX's memory you used:
- 17602 strings out of 493303
- 348435 string characters out of 3138847
- 433629 words of memory out of 3000000
- 20797 multiletter control sequences out of 15000+200000
- 11503 words of font info for 45 fonts, out of 3000000 for 9000
+ 18551 strings out of 493303
+ 358534 string characters out of 3138847
+ 902615 words of memory out of 3000000
+ 21728 multiletter control sequences out of 15000+200000
+ 12185 words of font info for 48 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,8n,69p,812b,325s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><
-C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Progr
-am Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files
-/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 
-2.9/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Program Files/MiKTeX 2.9/fonts
-/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pu
-blic/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsf
-onts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
-mr17.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><
-C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Progr
-am Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on HW3.pdf (2 pages, 143674 bytes).
+ 62i,8n,74p,812b,2359s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/
+Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program 
+Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKTeX 2.9
+/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
+ype1/public/amsfonts/cm/cmmi5.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publ
+ic/amsfonts/cm/cmmi7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr
+12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C
+:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Program 
+Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
+1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmtt8.pfb>
+Output written on HW3.pdf (7 pages, 832664 bytes).
 PDF statistics:
- 60 PDF objects out of 1000 (max. 8388607)
+ 94 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 38 words of extra memory for PDF output out of 10000 (max. 10000000)
 
