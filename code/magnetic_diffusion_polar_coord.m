@@ -13,7 +13,7 @@ r0 = 1e-3;
 BC = [0 mu*I/r0/2/pi];
 
 % Creation of the time and space steps. 
-tf = 20e-6; dr =  r0/100;
+tf = 10e-6; dr =  r0/100;
 lim = dr^2/2/D*.8; 
 dt = 2.5e-9;
 % Time and space arrays (mesh/grid):
@@ -41,7 +41,7 @@ for n = 1:N
         % Density Current:
         J(n, i) = 1/mu*(B(n, i+1) - B(n,i))/dr;
         % Dirichlet
-        J(n, 2) = 0;
+        J(n, 1) = J(n, 2);
         % Von Neumann
         J(n,end) = J(n,end-1); 
     end
