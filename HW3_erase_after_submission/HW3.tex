@@ -1,0 +1,140 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{xcolor}
+% Using the absolute value!
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{cite}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\usepackage{vmargin}
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+\usepackage{neuralnetwork}
+% MARGINS
+\setpapersize{A4}
+\setmargins{2.5cm}       
+{1.5cm}                        
+{16.5cm}                      
+{23.42cm}                   
+{10pt}                           
+{1cm}                           
+{0pt}                             
+{2cm}                           
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.92,0.92,0.95}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+\usepackage{neuralnetwork}
+\begin{document}
+
+\title{Homework 3 - ECE 5332}
+\author{Cesar Augusto Sanchez Villalobos}
+\date{\today}
+\maketitle
+
+\section{FTCS Scheme for Magnetic Diffusion}
+
+The current document serves as a report for the third assignment of the class on Numerical Methods, lectured by Dr. Jacob Stephens from the Department of Electrical and Computer engineering at Texas Tech University.
+
+\subsection{Problem Statement}
+
+Consider a $1 mm$ radius copper conductor (circular, $\sigma = 5.7\cdot 10^7 S/m$). At $t = 0^-$, the current and the magnetic field through the conductor, are zero. 
+
+\begin{enumerate}
+\item Develop a code to produce a numerical solution to the magnetic diffusion problem. Use the code to solve the following:
+\begin{enumerate}
+\item At $t=0^+$, the current through the conductor steps to $1 kA$. Solve the magnetic diffusion problem for $t = [0,10 \mu s]$.
+\begin{enumerate}
+\item Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$.
+\item Generate a single plot of $J_z$ vs radius with snapshots at every 250 ns. 
+\item Write a short paragraph describing the results. 
+\end{enumerate}
+\item  At $t=0^+$, a current of $I(t) = sin(2\pi f t)$ is passed through the wire.
+\begin{enumerate}
+\item For $f = 100kHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $250 ns$. 
+
+\item For $f = 1MHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $250 ns$. 
+
+\item For $f = 10MHz$, solve the magnetic diffusion problem for $t = [0,10\mu s]$. Generate a single plot of $H_\varphi$ vs radius with snapshots at every $250 ns$. Generate a single plot of $J_z$ vs radius with snapshots at every $250 ns$. 
+\item Write a short paragraph describing the results. 
+\end{enumerate}
+\end{enumerate}
+\end{enumerate}
+
+\subsection{Equations to Solve:}
+
+For this case, we need just to take into consideration the Diffusion Equation and some of the Maxwell's Equations to find the boundary conditions. Let's write first the diffusion equation:
+
+\begin{equation}
+\frac{1}{\mu \sigma} \nabla^2 \vec{B} = \frac{\partial \vec{B}}{\partial t}
+\end{equation}
+
+However, copper is a conductive material and its magnetic permeability is not much different to the vacuum permeability ($\mu_r = 0.999994$ for copper). Thus, for this problem, we will use $\mu_0$ in all remaining equations. 
+
+\subsubsection{Description of the problem}
+
+When a current goes through a conductor, the magnetic field will form concentric circles with axis in the middle of the conductor. It also starts on zero, and increases with respect to the radius until the surface of the conductor. This behavior is described by using a circular curve on the conductor and applying Ampere's Law, where:
+
+\begin{align*}
+B \cdot (2\pi r) &= \mu_0 J \pi r^2 \\
+B &= \frac{\mu r I}{2 \pi R^2}
+\end{align*}
+
+Which means that $B(r=0) = 0$ and $B(r=R) = \frac{\mu I}{2 \pi R}$, where $R$ is the value of the radius on the surface. Note that the magnitude of the field only depends on the radius, while the direction is coherent with the angle $\varphi$ in cylindrical coordinates, therefore:
+
+\begin{equation}
+\vec{B}(\vec{r},t) = B_r \hat{e}_{\varphi}
+\end{equation}
+
+As we have a vector field, we can compute the laplacian as:
+
+\begin{equation}
+\nabla^2 \vec{B}(\vec{r},t) = \left(\nabla^2 B_{r} - \frac{B_r}{r^2} \right)
+\end{equation}
+
+Where $ \nabla^2 B_r = \frac{1}{r}\frac{\partial}{\partial r} \left( r \frac{\partial B_r}{\partial r}\right)$. Which makes equation 1 into:
+
+\begin{equation}
+\frac{1}{r}\frac{\partial}{\partial r} \left( r \frac{\partial B_r}{\partial r}\right)- \frac{B_r}{r^2} = \frac{\partial \vec{B}}{\partial t}
+\end{equation}
+
+\subsubsection{Update Equation}
+We can write equation 4 by using the FTCS scheme, into the following update equation:
+
+\begin{equation}
+B_i^{n+1} = B_i^n + \frac{\Delta t}{\mu_0 \sigma } \frac{B_i^2}{r_i^2} + \frac{\Delta t}{\mu_0 \sigma \Delta r^2} \Big(B_{i+1}^n - 2B_i^n + B_{i-1}^n \Big) + \frac{\Delta t}{\mu_0 \sigma r_i \Delta r} \Big(B_{i+1}^m - B_i^n \Big) 
+\end{equation}
+
+While the update equation for the current density is:
+
+\begin{equation}
+
+\end{equation}
+\end{document}
