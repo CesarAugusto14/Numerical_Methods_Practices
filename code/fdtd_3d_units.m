@@ -1,0 +1,141 @@
+clc; clear variables; close all;
+
+% FDTD with units:
+f0 = 10e6;                % Frequency of source    [Hz]
+e0 = 8.854*10^-12;       % Permittivity of vacuum [farad/meter]
+u0 = 4*pi*10^-7;         % Permeability of vacuum [henry/meter]
+c0 = 1/(e0*u0)^.5;       % Speed of light         [meter/second]
+lam0  = c0/f0;           % Freespace Wavelength   [meter]
+t0  = 1/f0;              % Source Period          [second]
+k0 = 2*pi/lam0;          % Wavenumber
+
+% Resolution:
+Lmin = c0/f0;
+
+% Spatial Domain:
+Nl = 10;
+dx = Lmin/Nl;
+dy = dx;
+dz = dy; 
+
+[Lmax_x, Lmax_y, Lmax_z] = deal(5*lam0, 5*lam0, 5*lam0);  % given
+x = -Lmax_x:dx:Lmax_x;
+y = -Lmax_y:dy:Lmax_y;
+z = -Lmax_z:dz:Lmax_z;
+Nx = length(x); Ny = length(y); Nz = length(z);
+
+% Time Domain:
+Nt = 180;
+r = 0.99;  % Courant's Number.
+dt = (dx^-2+dy^-2+dz^-2)^-.5/c0*r;
+S = c0*dt/dx; % It is the same for the three directions.
+t = 0:dt:Nt*dt;
+
+% Initialization of the Fields:
+Ex = zeros(Nx, Ny+1, Nz+1);
+Ey = zeros(Nx+1, Ny, Nz+1);
+Ez = zeros(Nx+1, Ny+1, Nz);
+Jz = zeros(Nx+1, Ny+1, Nz);
+Hx = zeros(Nx+1, Ny, Nz);
+Hy = zeros(Nx, Ny+1, Nz);
+Hz = zeros(Nx, Ny, Nz+1);
+
+% Coefficients for Updating:
+[udx,udy,udz] = deal(dt/u0/dx, dt/u0/dy, dt/u0/dz); % H Coeffcients
+[edx,edy,edz] = deal(dt/e0/dx, dt/e0/dy, dt/e0/dz); % E Coeffcients
+
+fig1 = figure('color','w');
+fig1.Position = [500 500 800 800]; 
+for n = 1:Nt
+    
+    % Magnetic Update:
+    Hx = Hx + udz.*diff(Ey, 1, 3) - udy.*diff(Ez, 1, 2);
+    Hy = Hy + udz.*diff(Ez, 1, 1) - udx.*diff(Ex, 1, 3);
+    Hz = Hz + udy.*diff(Ex, 1, 2) - udx.*diff(Ey, 1, 1);
+    
+    % Electric Update:
+    Ex(:,2:end-1,2:end-1) = Ex(:,2:end-1,2:end-1)+...
+        edy.*diff(Hz(:,:,2:end-1),1,2)-...
+        edz.*diff(Hy(:,2:end-1,:),1,3);
+    
+    Ey(2:end-1,:,2:end-1) = Ey(2:end-1,:,2:end-1)+...
+        edz.*diff(Hx(2:end-1,:,:),1,3)-...
+        edx.*diff(Hz(:,:,2:end-1),1,1);
+    
+    Ez(2:end-1,2:end-1,:) = Ez(2:end-1,2:end-1,:)+...
+        edx.*diff(Hy(:,2:end-1,:),1,1)-...
+        edy.*diff(Hx(2:end-1,:,:),1,2) - dt/e0*Jz(2:end-1,2:end-1,:);    
+    
+    % Line Source
+    Jz(round(Nx/2),round(Ny/2),round(Nz/2)-2:round(Nz/2)+2) = ...
+        cos(2*pi*f0*dt*n).*cos(k0*z(round(Nz/2)-2:round(Nz/2)+2));
+    
+    % Mur's Absorbing Boundary Condition:
+    
+    if n > 1
+
+        % Initial walls:
+        Hx(1, :, :) = Hxold(2, :, :) + (S-1)/(S+1)*(Hx(2, :, :) - Hxold(1, :, :));
+        Hy(1, :, :) = Hyold(2, :, :) + (S-1)/(S+1)*(Hy(2, :, :) - Hyold(1, :, :));
+        Hz(1, :, :) = Hzold(2, :, :) + (S-1)/(S+1)*(Hz(2, :, :) - Hzold(1, :, :));
+        Ex(1, :, :) = Exold(2, :, :) + (S-1)/(S+1)*(Ex(2, :, :) - Exold(1, :, :));
+        Ey(1, :, :) = Eyold(2, :, :) + (S-1)/(S+1)*(Ey(2, :, :) - Eyold(1, :, :));
+        Ez(1, :, :) = Ezold(2, :, :) + (S-1)/(S+1)*(Ez(2, :, :) - Ezold(1, :, :));
+
+        Hx(:, 1, :) = Hxold(:, 2, :) + (S-1)/(S+1)*(Hx(:, 2, :) - Hxold(:, 1, :));
+        Hy(:, 1, :) = Hyold(:, 2, :) + (S-1)/(S+1)*(Hy(:, 2, :) - Hyold(:, 1, :));
+        Hz(:, 1, :) = Hzold(:, 2, :) + (S-1)/(S+1)*(Hz(:, 2, :) - Hzold(:, 1, :));
+        Ex(:, 1, :) = Exold(:, 2, :) + (S-1)/(S+1)*(Ex(:, 2, :) - Exold(:, 1, :));
+        Ey(:, 1, :) = Eyold(:, 2, :) + (S-1)/(S+1)*(Ey(:, 2, :) - Eyold(:, 1, :));
+        Ez(:, 1, :) = Ezold(:, 2, :) + (S-1)/(S+1)*(Ez(:, 2, :) - Ezold(:, 1, :));
+
+        Hx(:, :, 1) = Hxold(:, :, 2) + (S-1)/(S+1)*(Hx(:, :, 2) - Hxold(:, :, 1));
+        Hy(:, :, 1) = Hyold(:, :, 2) + (S-1)/(S+1)*(Hy(:, :, 2) - Hyold(:, :, 1));
+        Hz(:, :, 1) = Hzold(:, :, 2) + (S-1)/(S+1)*(Hz(:, :, 2) - Hzold(:, :, 1));
+        Ex(:, :, 1) = Exold(:, :, 2) + (S-1)/(S+1)*(Ex(:, :, 2) - Exold(:, :, 1));
+        Ey(:, :, 1) = Eyold(:, :, 2) + (S-1)/(S+1)*(Ey(:, :, 2) - Eyold(:, :, 1));
+        Ez(:, :, 1) = Ezold(:, :, 2) + (S-1)/(S+1)*(Ez(:, :, 2) - Ezold(:, :, 1));
+
+        % Ending Walls:
+
+        Hx(end, :, :) = Hxold(end-1, :, :) + (S-1)/(S+1)*(Hx(end-1, :, :) - Hxold(end, :, :));
+        Hy(end, :, :) = Hyold(end-1, :, :) + (S-1)/(S+1)*(Hy(end-1, :, :) - Hyold(end, :, :));
+        Hz(end, :, :) = Hzold(end-1, :, :) + (S-1)/(S+1)*(Hz(end-1, :, :) - Hzold(end, :, :));
+        Ex(end, :, :) = Exold(end-1, :, :) + (S-1)/(S+1)*(Ex(end-1, :, :) - Exold(end, :, :));
+        Ey(end, :, :) = Eyold(end-1, :, :) + (S-1)/(S+1)*(Ey(end-1, :, :) - Eyold(end, :, :));
+        Ez(end, :, :) = Ezold(end-1, :, :) + (S-1)/(S+1)*(Ez(end-1, :, :) - Ezold(end, :, :));  
+
+        Hx(:, end, :) = Hxold(:, end-1, :) + (S-1)/(S+1)*(Hx(:, end-1, :) - Hxold(:, end, :));
+        Hy(:, end, :) = Hyold(:, end-1, :) + (S-1)/(S+1)*(Hy(:, end-1, :) - Hyold(:, end, :));
+        Hz(:, end, :) = Hzold(:, end-1, :) + (S-1)/(S+1)*(Hz(:, end-1, :) - Hzold(:, end, :));
+        Ex(:, end, :) = Exold(:, end-1, :) + (S-1)/(S+1)*(Ex(:, end-1, :) - Exold(:, end, :));
+        Ey(:, end, :) = Eyold(:, end-1, :) + (S-1)/(S+1)*(Ey(:, end-1, :) - Eyold(:, end, :));
+        Ez(:, end, :) = Ezold(:, end-1, :) + (S-1)/(S+1)*(Ez(:, end-1, :) - Ezold(:, end, :));
+
+        Hx(:, :, end) = Hxold(:, :, end-1) + (S-1)/(S+1)*(Hx(:, :, end-1) - Hxold(:, :, end));
+        Hy(:, :, end) = Hyold(:, :, end-1) + (S-1)/(S+1)*(Hy(:, :, end-1) - Hyold(:, :, end));
+        Hz(:, :, end) = Hzold(:, :, end-1) + (S-1)/(S+1)*(Hz(:, :, end-1) - Hzold(:, :, end));
+        Ex(:, :, end) = Exold(:, :, end-1) + (S-1)/(S+1)*(Ex(:, :, end-1) - Exold(:, :, end));
+        Ey(:, :, end) = Eyold(:, :, end-1) + (S-1)/(S+1)*(Ey(:, :, end-1) - Eyold(:, :, end));
+        Ez(:, :, end) = Ezold(:, :, end-1) + (S-1)/(S+1)*(Ez(:, :, end-1) - Ezold(:, :, end));
+    end
+    % Previous time Values:
+    Hxold = Hx; Hyold = Hy; Hzold = Hz;
+    Exold = Ex; Eyold = Ey; Ezold = Ez;
+    % Plotting:
+    h = pcolor(x,z, abs(squeeze(Ez(1:end-1,round(Ny/2), :))')); 
+    h2 = get(h, 'Parent');
+    set(h2, 'LineWidth', 2, 'FontSize', 20, 'FontName', 'Times')
+    xlabel('x-position [m]')
+    ylabel('z-position [m]')
+    title(strcat('Simulation at t =', num2str(t(n)*1e6), 'us'))
+    colormap jet
+    colorbar
+    %clim([0 1])
+    shading interp; 
+    drawnow; 
+        if n==45
+            break
+        end
+
+end

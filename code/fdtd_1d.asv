@@ -1,0 +1,31 @@
+clc; clear variables; close all; 
+
+Nx = 101; x = linspace(-1, 1, Nx); dx = x(2)-x(1);
+
+xv = 1:Nx; xvt = 2:Nx-1;
+
+% First cond:
+Ey(xv) = 0; Hx(xv) = 0;
+
+% Permitivity and Permeability:
+e0 = 8.8542E-12; 
+u0 = 4*pi*1e-7;
+c = 1/sqrt(e0*u0);
+
+% Time Domain:
+t_max = 1e-1; 
+R = 1;
+dt = 5e-3*dx/R; 
+t = 0:dt:t_max;
+Nt = length(t);
+% Parameters:
+
+mEy = c*dt/e0; mHx = c*dt/u0;
+
+% Equations:
+
+for n = 1:Nt-1
+    
+    Hx(xvt) = Hx(xvt) + mHx/dx*(Ey(xvt + 1) - Ey(xvt));
+    
+    Ey(xvt) = Ey(xvt) + mEy/dx*()
